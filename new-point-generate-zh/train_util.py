@@ -93,7 +93,7 @@ def from_feature_get_model_input(features,hidden_dim,device = torch.device("cpu"
 def evaluate(args,model_config,model,save_dir,update_step):
     eval_feature_dir = os.path.join(args.feature_dir, "val")
     feature_file_list = os.listdir(eval_feature_dir)
-
+    logging.info("feature_file_list {}".format(feature_file_list))
     batch_size = args.eval_batch_size
     hidden_dim = model_config.hidden_dim
     device = args.device
@@ -133,11 +133,12 @@ def evaluate(args,model_config,model,save_dir,update_step):
                 loss = model(**inputs)
 
                 true_batch_size = batch[0].shape[0]
+                logging.info("true_batch_size[{}]".format(true_batch_size))
                 sample_num += true_batch_size
                 batch_loss = loss * true_batch_size
                 total_loss += batch_loss
 
-
+        logging.info("sample_num[{}]".format(sample_num))
         avg_loss = (total_loss / float(sample_num)).item()
         logging.info("evaluate on step = [{}] , average loss : [{}]".format(update_step, avg_loss))
         avg_loss_dict = {update_step: avg_loss}

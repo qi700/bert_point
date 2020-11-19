@@ -43,7 +43,7 @@ def check(args,model_config,vocab):
     if not os.path.exists(test_feature_dir):
         os.mkdir(test_feature_dir)
     if not os.path.exists(val_feature_dir):
-        os.mkdir(val_feature_dir)
+        os.mkdir()
 
 
     expect_train_feature_file_num = config.expect_train_feature_file_num
@@ -133,8 +133,8 @@ def main():
                         help="Random seed")
 
     args = parser.parse_args()
-    args.device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
-
+    #args.device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    args.device = torch.device("cpu")
     set_seed(args.seed)
 
     vocab_file = os.path.join(args.token_data, 'vocab.json')

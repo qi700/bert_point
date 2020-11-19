@@ -249,6 +249,7 @@ class Example(object):
         test_terminate = self.train_num + self.test_num
         dev_terminate = self.train_num + self.test_num + self.dev_num
 
+        print(total_sample_num)
 
         file_list = os.listdir(self.sub_dir)
         all_sample_list = []
@@ -258,14 +259,16 @@ class Example(object):
         dev_file_no = 0
         for file in file_list:
             path_file = os.path.join(self.sub_dir,file)
+            print(path_file)
             with open(path_file,"r",encoding='utf-8') as f:
                 data = json.load(f)["data"]
                 f.close()
+
             for sample in data:
                 if read_sample_num >= total_sample_num:
                     break
                 read_sample_num += 1
-
+                #print(read_sample_num)
                 sample_list = []
                 news_id = sample['news_id']
                 title = sample['title']
@@ -446,10 +449,10 @@ def main():
     parser.add_argument("--tokenized_dir", default=None, type=str, required=True,
                         help="分词后文件所存储的文件夹")
 
-    parser.add_argument("--split_data_dir",default = "E:\\0000_python\\point-genge\\point-generate\\zh-single-word\\news-tokenizer\\sub-single",type=str,
+    parser.add_argument("--split_data_dir",default = "./zw-sub-single",type=str,
                         help="切分后的文件存储的文件夹(源json文件太大了)")
 
-    parser.add_argument("--sub_file_sample_num",default=1e+5,type=int,
+    parser.add_argument("--sub_file_sample_num",default=5000,type=int,
                         help="每个子文件存储的样本数量")
     parser.add_argument("--seed",default=1234,type=int,
                         help="随机种子")
@@ -457,11 +460,18 @@ def main():
 
     parser.add_argument("--word_freq",default="vocab.json",type = str,
                         help="词表文件")
-    parser.add_argument("--train_sample_num",default=3e+5,type=int,
-                        help="训练集样本的数量")
-    parser.add_argument("--dev_sample_num",default=1.2e+4,type=int,
+    #parser.add_argument("--train_sample_num",default=3e+5,type=int,
+     #                   help="训练集样本的数量")
+    #parser.add_argument("--dev_sample_num",default=1.2e+4,type=int,
+     #                   help="验证集样本的数量")
+    #parser.add_argument("--test_sample_num",default=1.2e+4,type=int,
+    #                    help="测试集样本的数量")
+
+    parser.add_argument("--train_sample_num", default=8000, type=int,
+                                        help="训练集样本的数量")
+    parser.add_argument("--dev_sample_num",default=3500,type=int,
                         help="验证集样本的数量")
-    parser.add_argument("--test_sample_num",default=1.2e+4,type=int,
+    parser.add_argument("--test_sample_num",default=0,type=int,
                         help="测试集样本的数量")
 
     args = parser.parse_args()
@@ -479,12 +489,12 @@ def main():
                           tokenized_output_dir = args.tokenized_dir,
                           train_num = args.train_sample_num,
                           test_num = args.test_sample_num,
-                          dev_num = args.test_sample_num,)
+                          dev_num = args.dev_sample_num,)
 
     tokenizer = BasicTokenizer()
 
     # 这里开始没有除以10，内存爆了
-    example_obj.read_example(tokenizer,sub_file_sample_num=args.sub_file_sample_num / 10)
+    example_obj.read_example(tokenizer,sub_file_sample_num=args.sub_file_sample_num)
     # code.interact(local = locals())
 
     example_obj.gene_word_freq(args.word_freq)
